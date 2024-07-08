@@ -116,6 +116,16 @@ function(avr_generate_hex_file TARGET)
     _avr_generate_file(${TARGET} "hex" "ihex")
 endfunction()
 
+function(avr_generate_eep_file TARGET)
+    add_custom_command(
+        TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex "$<TARGET_FILE:${TARGET}>" "${CMAKE_BINARY_DIR}/${TARGET}.eep"
+        BYPRODUCTS ${OUTPUT_FILE_PATH}
+        COMMENT "Generating .eep file ${TARGET}.eep"
+    )
+endfunction()
+
 function(avr_generate_lss_file TARGET)
     set(OUTPUT_FILE_NAME "${TARGET}.lss")
 
